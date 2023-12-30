@@ -87,7 +87,6 @@ impl ServerPool {
                     "Unable to set weighted distribution for server pools: {:?}",
                     e
                 );
-                servers_dist = None;
             }
         }
 
