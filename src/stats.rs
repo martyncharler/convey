@@ -116,7 +116,7 @@ pub fn run(lb_config: &BaseConfig) -> Sender<StatsMssg> {
                 new_stats.total_bytes_rx = new_stats.total_bytes_rx + mssg.bytes_rx;
                 new_stats.total_bytes_tx = new_stats.total_bytes_tx + mssg.bytes_tx;
 
-                if let Some(mut backend_stats) = new_stats.backends.get_mut(&mssg.backend) {
+                if let Some( backend_stats) = new_stats.backends.get_mut(&mssg.backend) {
                     backend_stats.current_connections =
                         backend_stats.current_connections + mssg.connections;
                     if mssg.connections > 0 {
@@ -132,7 +132,7 @@ pub fn run(lb_config: &BaseConfig) -> Sender<StatsMssg> {
                 }
 
                 if let Some(frontend_name) = &mssg.frontend {
-                    if let Some(mut frontend_stats) = new_stats.frontends.get_mut(frontend_name) {
+                    if let Some( frontend_stats) = new_stats.frontends.get_mut(frontend_name) {
                         frontend_stats.current_connections =
                             frontend_stats.current_connections + mssg.connections;
                         if mssg.connections > 0 {

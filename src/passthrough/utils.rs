@@ -1,12 +1,13 @@
 extern crate pnet;
 
-use pnet::datalink::{linux, NetworkInterface};
-use pnet::packet::ip::IpNextHeaderProtocols;
-use pnet::packet::ipv4::MutableIpv4Packet;
-use pnet::packet::tcp::MutableTcpPacket;
-use pnet::packet::{tcp, Packet};
+use pnet::datalink::{NetworkInterface};
 use socket2::{Domain, SockAddr, Socket, Type};
 use std::net::{IpAddr, Ipv4Addr, SocketAddr};
+use pnet::packet::ip::IpNextHeaderProtocols;
+use pnet::packet::ipv4::MutableIpv4Packet;
+use pnet::packet::tcp;
+use pnet::packet::tcp::MutableTcpPacket;
+use pnet_macros_support::packet::Packet;
 
 // health ports are reserved for health checks
 pub const HEALTH_PORT_LOWER: u16 = 32768;
@@ -95,7 +96,7 @@ pub fn allocate_socket(listen_ip: Ipv4Addr) -> Option<Socket> {
 }
 
 pub fn find_interface(addr: Ipv4Addr) -> Option<NetworkInterface> {
-    let interfaces = linux::interfaces();
+    let interfaces = pnet::datalink::interfaces();
     for interface in interfaces {
         for ip in interface.clone().ips {
             if ip.ip() == addr {

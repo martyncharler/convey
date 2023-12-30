@@ -9,7 +9,7 @@ use self::utils::find_interface;
 use crate::config::{BaseConfig, Config};
 use crate::stats::StatsMssg;
 use pnet::datalink::Channel::Ethernet;
-use pnet::datalink::{linux, FanoutOption, FanoutType, NetworkInterface};
+use pnet::datalink::{FanoutOption, FanoutType, NetworkInterface};
 use pnet::packet::ethernet::{EtherTypes, EthernetPacket};
 use pnet::packet::ip::IpNextHeaderProtocols;
 use pnet::packet::ipv4::MutableIpv4Packet;
@@ -103,7 +103,7 @@ impl Server {
 fn process_packets(
     lb: &mut LB,
     interface: NetworkInterface,
-    interface_cfg: linux::Config,
+    interface_cfg: pnet::datalink::Config,
     stats_sender: Sender<StatsMssg>,
 ) {
     let mut stats = StatsMssg {
@@ -124,7 +124,7 @@ fn process_packets(
     });
 
     // Create a new channel, dealing with layer 2 packets
-    let (_, mut iface_rx) = match linux::channel(&interface, interface_cfg) {
+    let (_, mut iface_rx) = match pnet::datalink::channel(&interface, interface_cfg) {
         Ok(Ethernet(tx, rx)) => (tx, rx),
         Ok(_) => panic!("Unhandled channel type"),
         Err(e) => panic!(
@@ -269,15 +269,15 @@ pub fn run_server(lb: &mut LB, sender: Sender<StatsMssg>) {
     }
 }
 
-fn setup_interface_cfg() -> linux::Config {
-    let fanout = Some(FanoutOption {
+fn setup_interface_cfg() -> pnet::datalink::Config {
+    let linux_fanout = Some(FanoutOption {
         group_id: rand::random::<u16>(),
         fanout_type: FanoutType::LB,
         defrag: true,
         rollover: false,
     });
-    linux::Config {
-        fanout,
+    pnet::datalink::Config {
+        linux_fanout,
         ..Default::default()
     }
 }

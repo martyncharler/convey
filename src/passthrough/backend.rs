@@ -71,7 +71,7 @@ impl Backend {
         tuple.push_str(&ip_src.to_string());
         tuple.push_str(&port_src.to_string());
 
-        let mut srvs_ring = self.ring.lock().unwrap();
+        let srvs_ring = self.ring.lock().unwrap();
         debug!(
             "Scheduling backend server for {} with ring {:?}",
             tuple, srvs_ring
